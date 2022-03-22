@@ -255,15 +255,18 @@ func GenerateSnapshot(weight uint32) cachev3.Snapshot {
 	version++
 	nextversion := fmt.Sprintf("snapshot-%d", version)
 	fmt.Println("publishing version: ", nextversion)
-	return cachev3.NewSnapshot(
-		nextversion,        // version needs to be different for different snapshots
-		[]types.Resource{}, // endpoints
-		[]types.Resource{makeCluster(ClusterName1), makeCluster(ClusterName2)},
-		[]types.Resource{makeRoute(RouteName, weight, ClusterName1, ClusterName2)},
-		[]types.Resource{makeHTTPListener(ListenerName, RouteName)},
-		[]types.Resource{}, // runtimes
-		[]types.Resource{}, // secrets
+	snap, _ := cachev3.NewSnapshot(
+		nextversion, // version needs to be different for different snapshots,
+		map[string][]types.Resource{
+			resource.EndpointType: []types.Resource{}, // endpoints
+			resource.ClusterType:  []types.Resource{makeCluster(ClusterName1), makeCluster(ClusterName2)},
+			resource.RouteType:    []types.Resource{makeRoute(RouteName, weight, ClusterName1, ClusterName2)},
+			resource.ListenerType: []types.Resource{makeHTTPListener(ListenerName, RouteName)},
+			resource.RuntimeType:  []types.Resource{}, // runtimes
+			resource.SecretType:   []types.Resource{}, // secrets
+		},
 	)
+	return snap
 }
 
 func registerServer(grpcServer *grpc.Server, server serverv3.Server) {
@@ -329,7 +332,7 @@ func main() {
 	l.Debugf("will serve snapshot %+v", snapshot)
 
 	// Add the snapshot to the cache
-	if err := cache.SetSnapshot(nodeGroup, snapshot); err != nil {
+	if err := cache.SetSnapshot(context.Background(), nodeGroup, snapshot); err != nil {
 		l.Errorf("snapshot error %q for %+v", err, snapshot)
 		os.Exit(1)
 	}
@@ -361,7 +364,7 @@ func main() {
 		l.Debugf("will serve snapshot %+v", snapshot)
 
 		// Add the snapshot to the cache
-		if err := cache.SetSnapshot(nodeGroup, snapshot); err != nil {
+		if err := cache.SetSnapshot(context.Background(), nodeGroup, snapshot); err != nil {
 			l.Errorf("snapshot error %q for %+v", err, snapshot)
 			os.Exit(1)
 		}
