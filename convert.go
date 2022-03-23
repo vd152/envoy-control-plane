@@ -1,13 +1,18 @@
-package main
+package stringio
 
 import (
 	"fmt"
 	"io/ioutil"
+	stringio "stringio"
+	"time"
 
 	tap "github.com/envoyproxy/go-control-plane/envoy/data/tap/v3"
 	"github.com/golang/protobuf/proto"
 )
 
+func dump_event(direction string, timestamp time.Time, data []byte) string {
+	dump = stringio.New()
+}
 func main() {
 	path := "track_0.pb"
 	// file, _ := os.Open(path)
