@@ -57,6 +57,10 @@ const (
 	grpcMaxConcurrentStreams = 1000000
 )
 
+// func tap2pcap() api.TraceWrapper{
+// 	wrapper := api.TraceWrapper{}
+
+// }
 func makeCluster(clusterName string) *cluster.Cluster {
 	return &cluster.Cluster{
 		Name:                 clusterName,
@@ -362,7 +366,6 @@ func main() {
 			os.Exit(1)
 		}
 		l.Debugf("will serve snapshot %+v", snapshot)
-
 		// Add the snapshot to the cache
 		if err := cache.SetSnapshot(context.Background(), nodeGroup, snapshot); err != nil {
 			l.Errorf("snapshot error %q for %+v", err, snapshot)
