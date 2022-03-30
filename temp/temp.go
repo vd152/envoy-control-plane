@@ -15,6 +15,7 @@ func dump_event(direction string, timestamp time.Time, data []byte) string {
 	dump := New()
 	dump.WriteString(direction)
 	dump.WriteString(timestamp.Format("2006-01-02 15:04:05"))
+
 	return dump.GetValueString()
 }
 func main() {
