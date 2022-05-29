@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Go WebSocket </title>
+  </head>
+  <body>
+    <select id="tcp_connection">
+      <option value="0.0.0.0:5000">Envoy 1</option>
+      <option value="0.0.0.0:2000">Envoy 2</option>
+
+    </select>
+    <p id="data"></p>
+
+    <script>
+        let socket = new WebSocket("ws://localhost:3000/ws");
+        console.log("Attempting Connection...");
+
+        socket.onopen = () => {
+            console.log("Successfully Connected");
+        };
+        
+        socket.onclose = event => {
+            console.log("Socket Closed Connection: ", event);
+            socket.send("Client Closed!")
+        };
+
+        socket.onerror = error => {
+            console.log("Socket Error: ", error);
+        };
+       
+        socket.onmessage = event => {
+            console.log("Message Received: ", event.data);
+            document.getElementById("data").innerHTML = event.data
+        }
+        document.getElementById("tcp_connection").onchange = () => {
+          socket.send("tcp changed")
+        }
+    </script>
+  </body>
+</html>
